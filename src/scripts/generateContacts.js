@@ -1,20 +1,20 @@
-import { createFakeContact } from '../utils/createFakeContact';
-import { readContacts } from '../utils/readContacts';
-import { writeContacts } from '../utils/writeContacts';
+import { readContacts } from '../utils/readContacts.js';
+import { writeContacts } from '../utils/writeContacts.js';
+import { createFakeContact } from '../utils/createFakeContact.js';
 
 const generateContacts = async (number) => {
-  try {
-    const existingContacts = await readContacts();
-    const newContacts = Array.from({ lenght: number }, () =>
-      createFakeContact(),
-    );
-    const updatedContacts = [...existingContacts, ...newContacts];
-    await writeContacts(updatedContacts);
+  const contacts = await readContacts(); // Зчитуємо поточний список контактів
 
-    console.log('✅ Успішно додано ${number} контактів!');
-  } catch (error) {
-    console.error('❌ Помилка генерації контактів:', error.message);
+  for (let i = 0; i < number; i++) {
+    contacts.push(createFakeContact()); // Додаємо нові контакти
   }
+
+  await writeContacts(contacts); // Записуємо оновлений список у файл
+
+  console.log(`✅ Успішно додано ${number} контактів!`);
 };
 
-generateContacts(5);
+// Отримуємо аргумент з командного рядка (наприклад, `npm run generate 5`)
+const number = process.argv[2] ? parseInt(process.argv[2], 10) : 1;
+
+generateContacts(number);
